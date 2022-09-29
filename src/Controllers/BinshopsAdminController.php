@@ -241,10 +241,11 @@ class BinshopsAdminController extends Controller
     public function edit_post( $blogPostId , Request $request)
     {
         $language_id = $request->get('language_id');
+        //dd($language_id);
 
         $post_translation = BinshopsPostTranslation::where(
             [
-                ['lang_id', '=', $language_id],
+                //['lang_id', '=', $language_id],
                 ['post_id', '=', $blogPostId]
             ]
         )->first();

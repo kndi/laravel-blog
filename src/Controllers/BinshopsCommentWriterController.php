@@ -13,6 +13,7 @@ use BinshopsBlog\Models\BinshopsComment;
 use BinshopsBlog\Models\BinshopsPost;
 use BinshopsBlog\Models\BinshopsPostTranslation;
 use BinshopsBlog\Requests\AddNewCommentRequest;
+use Illuminate\Support\Facades\App;
 
 /**
  * Class BinshopsCommentWriterController
@@ -38,8 +39,9 @@ class BinshopsCommentWriterController extends Controller
      * @return \Illuminate\Contracts\View\Factory|\Illuminate\View\View
      * @throws \Exception
      */
-    public function addNewComment(AddNewCommentRequest $request, $locale, $blog_post_slug)
+    public function addNewComment(AddNewCommentRequest $request, $blog_post_slug)
     {
+        $locale = App::currentLocale();
 
         if (config("binshopsblog.comments.type_of_comments_to_show", "built_in") !== 'built_in') {
             throw new \RuntimeException("Built in comments are disabled");

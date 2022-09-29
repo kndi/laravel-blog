@@ -13,6 +13,8 @@ use BinshopsBlog\Models\BinshopsCategory;
 use BinshopsBlog\Models\BinshopsLanguage;
 use BinshopsBlog\Models\BinshopsPost;
 use BinshopsBlog\Models\BinshopsPostTranslation;
+use Illuminate\Support\Facades\App;
+
 
 /**
  * Class BinshopsReaderController
@@ -35,23 +37,24 @@ class BinshopsReaderController extends Controller
      * @param null $category_slug
      * @return mixed
      */
-    public function index($locale, Request $request, $category_slug = null)
+    public function index(Request $request, $category_slug = null)
     {
         // the published_at + is_published are handled by BinshopsBlogPublishedScope, and don't take effect if the logged in user can manageb log posts
 
         //todo
         $title = 'Blog Page'; // default title...
-
         $categoryChain = null;
         $posts = array();
         if ($category_slug) {
+            
             $category = BinshopsCategoryTranslation::where("slug", $category_slug)->with('category')->firstOrFail()->category;
+            /*
             $categoryChain = $category->getAncestorsAndSelf();
             $posts = $category->posts()->where("binshops_post_categories.category_id", $category->id)->with([ 'postTranslations' => function($query) use ($request){
                 $query->where("lang_id" , '=' , $request->get("lang_id"));
             }
             ])->get();
-
+            
             $posts = BinshopsPostTranslation::join('binshops_posts', 'binshops_post_translations.post_id', '=', 'binshops_posts.id')
                 ->where('lang_id', $request->get("lang_id"))
                 ->where("is_published" , '=' , true)
@@ -59,6 +62,9 @@ class BinshopsReaderController extends Controller
                 ->orderBy("posted_at", "desc")
                 ->whereIn('binshops_posts.id', $posts->pluck('id'))
                 ->paginate(config("binshopsblog.per_page", 10));
+            */
+
+            $posts = BinshopsPost::getPostsByCategorySlug($category_slug);
 
             // at the moment we handle this special case (viewing a category) by hard coding in the following two lines.
             // You can easily override this in the view files.
@@ -76,10 +82,12 @@ class BinshopsReaderController extends Controller
         //load category hierarchy
         $rootList = BinshopsCategory::roots()->get();
         BinshopsCategory::loadSiblingsWithList($rootList);
+        //dd(App::currentLocale());
 
         return view("binshopsblog::index", [
             'lang_list' => BinshopsLanguage::all('locale','name'),
-            'locale' => $request->get("locale"),
+            //'locale' => $request->get("locale"),
+            'locale' => App::currentLocale(),
             'lang_id' => $request->get('lang_id'),
             'category_chain' => $categoryChain,
             'categories' => $rootList,
@@ -111,7 +119,7 @@ class BinshopsReaderController extends Controller
 
         return view("binshopsblog::search", [
                 'lang_id' => $request->get('lang_id'),
-                'locale' => $request->get("locale"),
+                'locale' => App::currentLocale(),
                 'categories' => $rootList,
                 'query' => $query,
                 'search_results' => $search_results]
@@ -126,10 +134,10 @@ class BinshopsReaderController extends Controller
      * @param $category_slug
      * @return mixed
      */
-    public function view_category($locale, $hierarchy, Request $request)
+    public function view_category($hierarchy, Request $request)
     {
         $categories = explode('/', $hierarchy);
-        return $this->index($locale, $request, end($categories));
+        return $this->index($request, end($categories));
     }
 
     /**
@@ -139,7 +147,7 @@ class BinshopsReaderController extends Controller
      * @param $blogPostSlug
      * @return mixed
      */
-    public function viewSinglePost(Request $request, $locale, $blogPostSlug)
+    public function viewSinglePost(Request $request, $blogPostSlug)
     {
         // the published_at + is_published are handled by BinshopsBlogPublishedScope, and don't take effect if the logged in user can manage log posts
         $blog_post = BinshopsPostTranslation::where([
@@ -163,7 +171,7 @@ class BinshopsReaderController extends Controller
                 ->get(),
             'captcha' => $captcha,
             'categories' => $categories,
-            'locale' => $request->get("locale")
+            'locale' => App::currentLocale()
         ]);
     }
 

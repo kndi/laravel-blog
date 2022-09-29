@@ -1,9 +1,9 @@
 <?php
 
-Route::group(['middleware' => ['web'], 'namespace' => '\BinshopsBlog\Controllers'], function () {
+Route::group(['middleware' => 'web', 'namespace' => '\BinshopsBlog\Controllers'], function () {
 
     /** The main public facing blog routes - show all posts, view a category, view a single post, also the add comment route */
-    Route::group(['prefix' => "/{locale}/".config('binshopsblog.blog_prefix', 'blog')], function () {
+    Route::group(['middleware' => 'auth','prefix' => "/".config('binshopsblog.blog_prefix', 'blog')], function () {
 
         Route::get('/', 'BinshopsReaderController@index')
             ->name('binshopsblog.index');
@@ -13,9 +13,9 @@ Route::group(['middleware' => ['web'], 'namespace' => '\BinshopsBlog\Controllers
 
         Route::get('/category{subcategories}', 'BinshopsReaderController@view_category')->where('subcategories', '^[a-zA-Z0-9-_\/]+$')->name('binshopsblog.view_category');
 
-//        Route::get('/category/{categorySlug}',
-//            'BinshopsReaderController@view_category')
-//            ->name('binshopsblog.view_category');
+    //        Route::get('/category/{categorySlug}',
+    //            'BinshopsReaderController@view_category')
+    //            ->name('binshopsblog.view_category');
 
         Route::get('/{blogPostSlug}',
             'BinshopsReaderController@viewSinglePost')
@@ -36,7 +36,7 @@ Route::group(['middleware' => ['web'], 'namespace' => '\BinshopsBlog\Controllers
 
 
     /* Admin backend routes - CRUD for posts, categories, and approving/deleting submitted comments */
-    Route::group(['prefix' => config('binshopsblog.admin_prefix', 'blog_admin')], function () {
+    Route::group(['middleware' => 'auth','prefix' => config('binshopsblog.admin_prefix', 'blog_admin')], function () {
 
         Route::get('/setup', 'BinshopsAdminSetupController@setup')
             ->name('binshopsblog.admin.setup');

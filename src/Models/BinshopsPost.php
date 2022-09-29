@@ -4,6 +4,7 @@ namespace BinshopsBlog\Models;
 
 use Illuminate\Database\Eloquent\Model;
 use BinshopsBlog\Scopes\BinshopsBlogPublishedScope;
+use Carbon\Carbon;
 
 /**
  * Class BinshopsPost
@@ -101,6 +102,28 @@ class BinshopsPost extends Model
     public function comments()
     {
         return $this->hasMany(BinshopsComment::class, 'post_id');
+    }
+
+    public static function getPostsByCategorySlug($category_slug)
+    {
+        $lang_id = BinshopsLanguage::getLangID();
+        $category = BinshopsCategoryTranslation::where("slug", $category_slug)->with('category')->firstOrFail()->category;
+        $categoryChain = $category->getAncestorsAndSelf();
+        $posts = $category->posts()->where("binshops_post_categories.category_id", $category->id)->with([ 'postTranslations' => function($query) use ($lang_id){
+            $query->where("lang_id" , '=' , $lang_id);
+        }
+        ])->get();
+
+        $posts = BinshopsPostTranslation::join('binshops_posts', 'binshops_post_translations.post_id', '=', 'binshops_posts.id')
+                ->where('lang_id', $lang_id)
+                ->where("is_published" , '=' , true)
+                ->where('posted_at', '<', Carbon::now()->format('Y-m-d H:i:s'))
+                ->orderBy("posted_at", "desc")
+                ->whereIn('binshops_posts.id', $posts->pluck('id'))
+                ->paginate(config("binshopsblog.per_page", 10));
+
+        return $posts;
+
     }
 
 }

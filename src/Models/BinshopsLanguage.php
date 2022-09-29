@@ -4,6 +4,7 @@
 namespace BinshopsBlog\Models;
 
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Facades\App;
 
 class BinshopsLanguage extends Model
 {
@@ -32,6 +33,14 @@ class BinshopsLanguage extends Model
     public function category()
     {
         return $this->belongsTo(BinshopsCategory::class, 'category_id');
+    }
+
+    public static function getLangID(){
+        $lang = BinshopsLanguage::where('locale', App::currentLocale())
+            ->where('active', true)
+            ->first();
+        return $lang->id;
+
     }
 
 }

@@ -2,7 +2,7 @@
 
 namespace BinshopsBlog\Models;
 
-use App\User;
+use App\Models\Users\User;
 use Illuminate\Database\Eloquent\Model;
 use BinshopsBlog\Scopes\BlogCommentApprovedAndDefaultOrderScope;
 
@@ -62,8 +62,9 @@ class BinshopsComment extends Model
     public function author()
     {
         if ($this->user_id) {
-            $field = config("binshopsblog.comments.user_field_for_author_name","name");
-            return optional($this->user)->$field;
+            //$field = config("binshopsblog.comments.user_field_for_author_name","name");
+            return User::find($this->user_id)->profile->full_name ;
+            //return optional($this->user)->$field;
         }
 
         return $this->author_name;
