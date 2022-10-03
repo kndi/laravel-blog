@@ -1,6 +1,15 @@
 <?php
 
+
+
 Route::group(['middleware' => 'web', 'namespace' => '\BinshopsBlog\Controllers'], function () {
+
+    Route::get('blog_images/{img}', [
+        'as' => 'images.showImage',
+        'uses' => 'BinshopsImageUploadController@showImage',
+        'middleware' => 'auth',
+    ]);
+
 
     /** The main public facing blog routes - show all posts, view a category, view a single post, also the add comment route */
     Route::group(['middleware' => 'auth','prefix' => "/".config('binshopsblog.blog_prefix', 'blog')], function () {
@@ -91,6 +100,10 @@ Route::group(['middleware' => 'web', 'namespace' => '\BinshopsBlog\Controllers']
             'BinshopsAdminController@destroy_post')
             ->name('binshopsblog.admin.destroy_post');
 
+        Route::delete('/blog_images/remove/{imageId}',
+        'BinshopsImageUploadController@remove_image')
+        ->name('binshopsblog.admin.remove_image');
+
         Route::group(['prefix' => 'comments',], function () {
 
             Route::get('/',
@@ -122,7 +135,11 @@ Route::group(['middleware' => 'web', 'namespace' => '\BinshopsBlog\Controllers']
                 'BinshopsCategoryAdminController@edit_category')
                 ->name('binshopsblog.admin.categories.edit_category');
 
-            Route::patch('/edit_category/{categoryId}',
+            Route::post('/edit_category_toggle/{categoryId}',
+                'BinshopsCategoryAdminController@edit_category_toggle')
+                ->name('binshopsblog.admin.edit_category_toggle');
+
+            Route::post('/edit_category/{categoryId}',
                 'BinshopsCategoryAdminController@update_category')
                 ->name('binshopsblog.admin.categories.update_category');
 

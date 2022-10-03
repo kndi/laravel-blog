@@ -119,7 +119,8 @@ class BinshopsAdminController extends Controller
             $new_blog_post = BinshopsPost::findOrFail($request['post_id']);
         }
 
-        $post_exists = $this->check_if_same_post_exists($request['slug'] , $request['lang_id'], $request['post_id']);
+        //$post_exists = $this->check_if_same_post_exists($request['slug'] ,  $request['lang_id'],  $request['post_id']);
+        $post_exists = $this->check_if_same_post_exists($request['slug'] , $translation->id);
         if ($post_exists){
             Helpers::flash_message("Post already exists - try to change the slug for this language");
         }else {
@@ -177,7 +178,8 @@ class BinshopsAdminController extends Controller
         }
 
         if ($request['slug']){
-            $post_exists = $this->check_if_same_post_exists($request['slug'] , $request['lang_id'], $new_blog_post->id);
+            //$post_exists = $this->check_if_same_post_exists($request['slug'] , $request['lang_id'], $new_blog_post->id);
+            $post_exists = $this->check_if_same_post_exists($request['slug'] , $translation->id);
             if ($post_exists){
                 Helpers::flash_message("Post already exists - try to change the slug for this language");
             }else{
@@ -245,7 +247,7 @@ class BinshopsAdminController extends Controller
 
         $post_translation = BinshopsPostTranslation::where(
             [
-                //['lang_id', '=', $language_id],
+                ['lang_id', '=', $language_id],
                 ['post_id', '=', $blogPostId]
             ]
         )->first();
@@ -319,7 +321,8 @@ class BinshopsAdminController extends Controller
             $new_blog_post->posted_at = Carbon::now();
         }
 
-        $post_exists = $this->check_if_same_post_exists($request['slug'] , $request['lang_id'], $blogPostId);
+        //$post_exists = $this->check_if_same_post_exists($request['slug'] , $request['lang_id'], $blogPostId);
+        $post_exists = $this->check_if_same_post_exists($request['slug'] , $translation->id);
         if ($post_exists){
             Helpers::flash_message("Post already exists - try to change the slug for this language");
         }else {
@@ -357,7 +360,8 @@ class BinshopsAdminController extends Controller
             ['lang_id', '=', $lang_id]
         ])->firstOrFail();
 
-        $path = public_path('/' . config("binshopsblog.blog_upload_dir"));
+       // $path = public_path('/' . config("binshopsblog.blog_upload_dir"));
+       $path = storage_path('app/' . config("binshopsblog.blog_upload_dir"));
         if (!$this->checked_blog_image_dir_is_writable) {
             if (!is_writable($path)) {
                 throw new \RuntimeException("Image destination path is not writable ($path)");
@@ -456,12 +460,11 @@ class BinshopsAdminController extends Controller
     }
 
     //translations for the same psots are ignored
-    protected function check_if_same_post_exists($slug, $lang_id, $post_id){
+    protected function check_if_same_post_exists($slug, $translation_id){
         $slg = BinshopsPostTranslation::where(
             [
                 ['slug','=', $slug],
-                ['lang_id', '=', $lang_id],
-                ['post_id', '<>', $post_id]
+                ['id', '<>', $translation_id]
             ]
         )->first();
         if ($slg){

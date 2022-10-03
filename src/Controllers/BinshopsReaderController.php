@@ -151,9 +151,9 @@ class BinshopsReaderController extends Controller
     {
         // the published_at + is_published are handled by BinshopsBlogPublishedScope, and don't take effect if the logged in user can manage log posts
         $blog_post = BinshopsPostTranslation::where([
-            ["slug", "=", $blogPostSlug],
-            ['lang_id', "=" , $request->get("lang_id")]
+            ["slug", "=", $blogPostSlug]
         ])->firstOrFail();
+        
 
         if ($captcha = $this->getCaptchaObject()) {
             $captcha->runCaptchaBeforeShowingPosts($request, $blog_post);

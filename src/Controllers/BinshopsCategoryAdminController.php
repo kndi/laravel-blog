@@ -130,7 +130,6 @@ class BinshopsCategoryAdminController extends Controller
     public function edit_category($categoryId, Request $request){
         $language_id = $request->get('language_id');
         $language_list = BinshopsLanguage::where('active',true)->get();
-
         $category = BinshopsCategory::findOrFail($categoryId);
         $cat_trans = BinshopsCategoryTranslation::where(
             [
@@ -140,6 +139,32 @@ class BinshopsCategoryAdminController extends Controller
         )->first();
 
         return view("binshopsblog_admin::categories.edit_category",[
+            'category' => $category,
+            'category_translation' => $cat_trans,
+            'categories_list' => BinshopsCategoryTranslation::orderBy("category_id")->where('lang_id', $language_id)->get(),
+            'language_id' => $language_id,
+            'language_list' => $language_list
+        ]);
+    }
+
+    public function edit_category_toggle( $categoryId , Request $request)
+    {
+        $language_id = $request->get('selected_lang');
+        $cat_trans = BinshopsCategoryTranslation::where(
+            [
+                ['lang_id', '=', $language_id],
+                ['category_id', '=', $categoryId]
+            ]
+        )->first();
+        if (!$cat_trans){
+            $cat_trans = new BinshopsCategoryTranslation();
+        }
+
+        $category = BinshopsCategory::findOrFail($categoryId);
+        $language_list = BinshopsLanguage::where('active',true)->get();
+        //$ts = BinshopsCategoryTranslation::where("lang_id", $language_id)->limit(1000)->get();
+
+        return view("binshopsblog_admin::categories.edit_category", [
             'category' => $category,
             'category_translation' => $cat_trans,
             'categories_list' => BinshopsCategoryTranslation::orderBy("category_id")->where('lang_id', $language_id)->get(),
@@ -158,7 +183,7 @@ class BinshopsCategoryAdminController extends Controller
     public function update_category(UpdateBinshopsBlogCategoryRequest $request, $categoryId){
         /** @var BinshopsCategory $category */
         $category = BinshopsCategory::findOrFail($categoryId);
-        $language_id = $request->get('language_id');
+        $language_id = $request->get('lang_id');
         $translation = BinshopsCategoryTranslation::where(
             [
                 ['lang_id', '=', $language_id],

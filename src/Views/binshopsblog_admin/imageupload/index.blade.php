@@ -24,6 +24,15 @@
     @foreach($uploaded_photos as $uploadedPhoto)
 
         <div style='border-radius:15px; border:2px solid #efefef; background : #fefefe; margin: 15px;padding:15px'>
+            <form onsubmit="return confirm('Are you sure you want to delete this image?\n You cannot undo this action!');"
+            method='post' action='{{route("binshopsblog.admin.remove_image", $uploadedPhoto->id)}}' class='float-right'>
+          @csrf
+          <input name="_method" type="hidden" value="DELETE"/>
+          <button type='submit' class='btn btn-danger btn-sm'>
+              <i class="fa fa-trash-o" aria-hidden="true"></i>
+              Delete
+          </button>
+      </form>
                     <h3>Image ID: {{$uploadedPhoto->id}}: {{$uploadedPhoto->image_title ?? "Untitled Photo"}}</h3>
                     <h4>
                         <small title='{{$uploadedPhoto->created_at}}'>
@@ -40,7 +49,6 @@
                         foreach ($uploadedPhoto->uploaded_images as $file_key => $file) {
                         $id = "uploaded_" . ($uploadedPhoto->id) . "_" . $file_key;
                         ?>
-
 
                         <div class='col-md-12 '>
                             <h6 class='text-center mt-3'><strong>{{$file_key}}</strong> - {{$file['w']}}

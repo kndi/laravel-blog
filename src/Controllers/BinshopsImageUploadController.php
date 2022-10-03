@@ -10,6 +10,7 @@ use BinshopsBlog\Models\BinshopsUploadedPhoto;
 use File;
 use BinshopsBlog\Requests\UploadImageRequest;
 use BinshopsBlog\Traits\UploadFileTrait;
+use BinshopsBlog\Helpers;
 
 /**
  * Class BinshopsAdminController
@@ -48,7 +49,7 @@ class BinshopsImageUploadController extends Controller
 
     public function index()
     {
-        return view("binshopsblog_admin::imageupload.index", ['uploaded_photos' => BinshopsUploadedPhoto::orderBy("id", "desc")->paginate(10)]);
+        return view("binshopsblog_admin::imageupload.index", ['uploaded_photos' => BinshopsUploadedPhoto::where('source','ImageUpload')->orderBy("id", "desc")->paginate(10)]);
     }
 
     /**
@@ -123,6 +124,37 @@ class BinshopsImageUploadController extends Controller
 
 
         return $uploaded_image_details;
+
+    }
+
+    public function showImage($img)
+    {
+        // get the image named $slug from storage and display it
+
+        // Something like (not sure)
+        //$image = File::get('blog_images/' . $slug . '.jpg');
+        //dd('wtf');
+        $image = File::get(storage_path('app/' . config("binshopsblog.blog_upload_dir") . '/' . $img));
+        //dd($image);
+        return response()->make($image, 200, ['content-type' => 'image/jpg']);
+    }
+
+
+    public function remove_image($img)
+    {
+        $image = BinshopsUploadedPhoto::find($img);
+        $path = storage_path('app/' . config("binshopsblog.blog_upload_dir"));
+        foreach ($image->uploaded_images as $file_key => $file) {
+            $filename = $file['filename'];
+            $imgpath = $path . '/' . $filename;
+            if (file_exists($imgpath)) {
+                unlink($imgpath);
+            }
+        }
+        $image->delete();
+
+        Helpers::flash_message("Image removed");
+        return redirect()->back();
 
     }
 

@@ -41,7 +41,7 @@
                         <div class='col'>
                             <div class="form-group">
                                 <label id="author_email_label" for="author_email">Your Email
-                                    <small>(won't be displayed publicly)</small>
+                                    <small>(wont be displayed publicly)</small>
                                 </label>
                                 <input
                                         type='email'
