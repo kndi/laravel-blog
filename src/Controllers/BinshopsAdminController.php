@@ -55,7 +55,7 @@ class BinshopsAdminController extends Controller
     public function index(Request $request)
     {
         $language_id = $request->get('language_id');
-        $posts = BinshopsPostTranslation::orderBy("post_id", "desc")->where('lang_id', $language_id)
+        $posts = BinshopsPostTranslation::orderBy("post_id", "desc")/*->where('lang_id', $language_id)*/
             ->paginate(10);
 
         return view("binshopsblog_admin::index", [
@@ -242,6 +242,7 @@ class BinshopsAdminController extends Controller
      */
     public function edit_post( $blogPostId , Request $request)
     {
+        
         $language_id = $request->get('language_id');
         //dd($language_id);
 

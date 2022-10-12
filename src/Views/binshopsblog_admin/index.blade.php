@@ -1,8 +1,51 @@
 @extends("binshopsblog_admin::layouts.admin_layout")
 @section("content")
 
+{{--
 
     <h5>Admin - Manage Blog Posts</h5>
+
+    <div class="card m-4">
+        <div class="card-body">
+        <div class="card">
+          <div class="card-body">
+                <h5 class='card-title'>Post title</h5>
+                <h5 class='card-subtitle mb-2 text-muted'>Subtitle</h5>
+                    <dt class="">By</dt>
+                    <dd class="">Simo</dd>
+                
+                <dt class="">Posted at</dt>
+                <dd class="">2022-09-12</dd>
+                
+          </div>
+        </div>
+        <br>
+        <div class="card bg-primary text-white">
+          <div class="card-body">Primary card</div>
+        </div>
+        <br>
+        <div class="card bg-success text-white">
+          <div class="card-body">Success card</div>
+        </div>
+    </div>
+      </div>
+
+      <div class="card m-4">
+        <div class="card-body">
+        <div class="card">
+          <div class="card-body">Basic card</div>
+        </div>
+        <br>
+        <div class="card bg-primary text-white">
+          <div class="card-body">Primary card</div>
+        </div>
+        <br>
+        <div class="card bg-success text-white">
+          <div class="card-body">Success card</div>
+        </div>
+    </div>
+      </div>
+    --}}
 
     @forelse($post_translations as $post)
         <div class="card m-4" style="">
