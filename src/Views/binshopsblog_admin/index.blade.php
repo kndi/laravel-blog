@@ -1,7 +1,7 @@
 @extends("binshopsblog_admin::layouts.admin_layout")
 @section("content")
 
-{{--
+
 
     <h5>Admin - Manage Blog Posts</h5>
 
@@ -45,7 +45,7 @@
         </div>
     </div>
       </div>
-    --}}
+
 
     @forelse($post_translations as $post)
         <div class="card m-4" style="">
