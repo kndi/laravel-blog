@@ -40,7 +40,6 @@ class BinshopsLanguage extends Model
             ->where('active', true)
             ->first();
         return $lang->id;
-
     }
 
 }

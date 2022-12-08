@@ -41,7 +41,8 @@ class BinshopsPostTranslation extends Model implements SearchResultInterface
      */
     public function language()
     {
-        return $this->hasOne(BinshopsLanguage::class,"lang_id");
+        //return $this->hasOne(BinshopsLanguage::class,"lang_id");
+        return BinshopsLanguage::find($this->lang_id);
     }
 
     /**
@@ -235,6 +236,7 @@ class BinshopsPostTranslation extends Model implements SearchResultInterface
      */
     public function edit_url()
     {
-        return route("binshopsblog.admin.edit_post", $this->post_id);
+        $lang = $this->language();
+        return route("binshopsblog.admin.edit_post", ['blogPostId' => $this->post_id, 'lang' => $lang->iso_code]);
     }
 }

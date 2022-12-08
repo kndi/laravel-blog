@@ -153,7 +153,6 @@ class BinshopsReaderController extends Controller
         $blog_post = BinshopsPostTranslation::where([
             ["slug", "=", $blogPostSlug]
         ])->firstOrFail();
-        
 
         if ($captcha = $this->getCaptchaObject()) {
             $captcha->runCaptchaBeforeShowingPosts($request, $blog_post);

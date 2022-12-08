@@ -69,7 +69,7 @@ Route::group(['middleware' => 'web', 'namespace' => '\BinshopsBlog\Controllers']
             'BinshopsAdminController@store_post_toggle')
             ->name('binshopsblog.admin.store_post_toggle');
 
-        Route::get('/edit_post/{blogPostId}',
+        Route::get('/edit_post/{blogPostId}/{lang}',
             'BinshopsAdminController@edit_post')
             ->name('binshopsblog.admin.edit_post');
 

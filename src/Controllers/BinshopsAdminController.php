@@ -240,12 +240,12 @@ class BinshopsAdminController extends Controller
      * @param $blogPostId
      * @return mixed
      */
-    public function edit_post( $blogPostId , Request $request)
+    public function edit_post( $blogPostId, $lang , Request $request)
     {
         
-        $language_id = $request->get('language_id');
-        //dd($language_id);
-
+        //$language_id = $request->get('language_id');
+        $language=BinshopsLanguage::where('iso_code',$lang)->first();
+        $language_id=$language->id;
         $post_translation = BinshopsPostTranslation::where(
             [
                 ['lang_id', '=', $language_id],
